@@ -2,25 +2,24 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <cstdio>
 
-#include "input.h"
-
-const int MAX_SIZE = 100;
+void inputWorkout(std::string &workoutName, std::string &exerciseName, int &sets, int &reps, double &weight);
 
 int main()
 {
 
-  char chooseDay;
-  std::string date;
+  std::string chooseDay;
+  std::string date_FileName;
   std::string workoutName;
   std::string exerciseName;
   int sets;
   int reps = 0;
   double weight;
-  int choice;
+  int choice = -1;
 
-  // int iterations = 0;
-  // const int MAX_ITERATIONS = 5;
+  std::ofstream fout;
+  std::ifstream fin;
 
   std::cout << "Welcome to Personal Workout Tracker" << std::endl;
 
@@ -40,64 +39,114 @@ int main()
     {
     case 1:
       std::cout << "Adding a Workout ..." << std::endl;
-      std::cout << "Enter date (dd/mm/yy): ";
-      std::cin >> date;
+      std::cout << "Enter date (dd/mm/yy) with .txt extenxion: ";
+      std::cin >> date_FileName;
       inputWorkout(workoutName, exerciseName, sets, reps, weight);
-      std::cout << "Workout saved." << std::endl;
+      // Saving workout to file
+      fout.open(date_FileName);
+      if (fout.is_open())
+      {
+        fout << "Workout Name: ";
+        fout << workoutName << std::endl;
+        fout << "Exercise Name: ";
+        fout << exerciseName << std::endl;
+        fout << "Sets: ";
+        fout << sets << std::endl;
+        fout << "Reps: ";
+        fout << reps << std::endl;
+        fout << "Weight: ";
+        fout << weight << std::endl;
+        std::cout << "Workout saved." << std::endl;
+        fout.close();
+      }
+      else
+      {
+        std::cout << "Error creating file." << std::endl;
+      }
+
       break;
 
     case 2:
       std::cout << "Adding a Rest day ..." << std::endl;
       std::cout << "Enter date (dd/mm/yy): ";
-      std::cin >> date;
+      std::cin >> date_FileName;
       std::cout << "Rest Day saved." << std::endl;
       break;
 
     case 3:
-    std::cout << "Editing a workout ..." << std::endl;
-    std::cout << "Enter date of the workout (dd/mm/yy): ";
-    std::cin >> date;
-    std::cout << "What would you like to do?" << std::endl;
-    std::cout << "1. Add an exercise." << std::endl;
-    std::cout << "2. Edit an exercise." << std::endl;
-    std::cout << "3. Delete an exercise." << std::endl;
-    std::cout << "0. Return to options." << std::endl;
-    //Choice variable
-    //inner switch
-    //options: add exercise, edit an exercise(sets, reps, weight)
+      std::cout << "Editing a workout ..." << std::endl;
+      std::cout << "Enter date of the workout (dd/mm/yy): ";
+      std::cin >> date_FileName;
+      std::cout << "What would you like to do?" << std::endl;
+      std::cout << "1. Add an exercise." << std::endl;
+      std::cout << "2. Edit an exercise." << std::endl;
+      std::cout << "3. Delete an exercise." << std::endl;
+      std::cout << "0. Return to dashboard." << std::endl;
 
-
+      int editChoice;
+      /*switch (editChoice)
+      {
+      case 1:
+        // append exercise to file
+      case 2:
+        // ask if the user wants to:
+        //   1. change exercise name
+        //   2. edit no. of sets or reps
+        //  3. edit weight
+        //  4. go back to menu
+      case 3:
+        // Ask exercise name
+        // Confirm if the user wants to delete the exercise
+        // Delete exercise and show the workout in console and save in file
+      }*/
+      break;
+    case 4:
+      std::cout << "Enter date: ";
+      std::cin >> date_FileName;
+      std::cout << "Are you sure you want to delete the contents of " << date_FileName << "(y/n): ";
+      char confirmChar;
+      std::cin >> confirmChar;
+      date_FileName += ".txt";
+      if (confirmChar == 'y' || confirmChar == 'Y')
+      {
+        // delete file
+        if (std::remove(date_FileName.c_str()) == 0)
+        {
+          std::cout << date_FileName << " has been succesfully deleted." << std::endl;
+        }
+        else
+        {
+          std::cout << "Error deleting file.";
+        }
+      }
+      break;
+    case 0:
+      std::cout << "Exiting the program.";
+      break;
+    default:
+      std::cout << "Invalid choice." << std::endl;
     }
-
-    //   if (choice == 'Y' || choice == 'y')
-    //   {
-
-    //     std::cout << "Workout or Rest Day (W/R): ";
-    //     std::cin >> chooseDay;
-    //     std::cin.ignore();
-
-    //     std::cout << "Enter date (dd/mm/yy): ";
-    //     std::cin.ignore();
-    //     std::getline(std::cin, date);
-
-    //     if (chooseDay == 'W' || chooseDay == 'w')
-    //     {
-
-    //       inputWorkout(workoutName, exerciseName, sets, reps, weight);
-    //     }
-    //     else if (chooseDay == 'R' || chooseDay == 'r')
-    //     {
-
-    //       std::cout << "Rest Day Saved." << std::endl;
-    //     }
-    //   }
-    //   else if (choice == 'N' || choice == 'n')
-    //   {
-    //     break;
-    //   }
-
-    //   iterations++;
-    // }
   }
+
   return 0;
+}
+
+void inputWorkout(std::string &workoutName, std::string &exerciseName, int &sets, int &reps, double &weight)
+{
+  std::cin.ignore();
+  std::cout << "Enter Workout Name: ";
+  std::cin.ignore();
+  std::getline(std::cin, workoutName);
+
+  std::cout << "Input Exercise name: ";
+  std::getline(std::cin, exerciseName);
+
+  std::cout << "Input Number of Sets: ";
+  std::cin >> sets;
+
+  std::cout << "Input Number of Reps: ";
+  std::cin >> reps;
+
+  std::cout << "Input weight in kg: ";
+  std::cin >> weight;
 }
