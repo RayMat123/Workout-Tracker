@@ -4,7 +4,13 @@
 #include <fstream>
 #include <cstdio>
 
-void inputWorkout(std::string &workoutName, std::string &exerciseName, int &sets, int &reps, double &weight);
+void inputWorkoutfromUser(std::string &workoutName, std::string &exerciseName, int &sets, int &reps, double &weight);
+
+void writeToStream(std::ofstream &file, const std::string &label, const std::string &value);
+
+void writeToStream(std::ofstream &file, const std::string &label, int value);
+
+void writeToStream(std::ofstream &file, const std::string &label, double value);
 
 int main()
 {
@@ -39,23 +45,18 @@ int main()
     {
     case 1:
       std::cout << "Adding a Workout ..." << std::endl;
-      std::cout << "Enter date (dd/mm/yy) with .txt extenxion: ";
+      std::cout << "Enter date (dd-mm-yy): ";
       std::cin >> date_FileName;
-      inputWorkout(workoutName, exerciseName, sets, reps, weight);
+      inputWorkoutfromUser(workoutName, exerciseName, sets, reps, weight);
       // Saving workout to file
-      fout.open(date_FileName);
+      fout.open(date_FileName + ".txt");
       if (fout.is_open())
       {
-        fout << "Workout Name: ";
-        fout << workoutName << std::endl;
-        fout << "Exercise Name: ";
-        fout << exerciseName << std::endl;
-        fout << "Sets: ";
-        fout << sets << std::endl;
-        fout << "Reps: ";
-        fout << reps << std::endl;
-        fout << "Weight: ";
-        fout << weight << std::endl;
+        writeToStream(fout, "Workout Name:", workoutName);
+        writeToStream(fout, "Exercise Name:", exerciseName);
+        writeToStream(fout, "Sets:", sets);
+        writeToStream(fout, "Reps:", reps);
+        writeToStream(fout, "Weight:", weight);
         std::cout << "Workout saved." << std::endl;
         fout.close();
       }
@@ -70,9 +71,31 @@ int main()
       std::cout << "Adding a Rest day ..." << std::endl;
       std::cout << "Enter date (dd/mm/yy): ";
       std::cin >> date_FileName;
-      std::cout << "Rest Day saved." << std::endl;
-      break;
 
+      fin.open(date_FileName + ".txt");
+      if (fin.is_open())
+      {
+        fout << "**Rest Day**" << std::endl;
+        std::cout << "Rest Day saved." << std::endl;
+        std::cout << "Would you like to add a note? (y/n): ";
+        char noteChoice;
+        std::cin >> noteChoice;
+        if (noteChoice == 'y' || noteChoice == 'Y')
+        {
+          std::cout << "Adding a note ..." << std::endl;
+          std::string restDayNote;
+          std::cout << "Note: ";
+          std::cin.ignore();
+          std::getline(fin, restDayNote);
+          std::cout << "Note added to rest day " << date_FileName << " ." << std::endl;
+          fin.close();
+        }
+        else if (noteChoice == 'n' || noteChoice == 'N')
+        {
+          std::cout << "Did not added a note and the rest day is saved." << std::endl;
+        }
+      }
+      break;
     case 3:
       std::cout << "Editing a workout ..." << std::endl;
       std::cout << "Enter date of the workout (dd/mm/yy): ";
@@ -127,13 +150,11 @@ int main()
       std::cout << "Invalid choice." << std::endl;
     }
   }
-
   return 0;
 }
 
-void inputWorkout(std::string &workoutName, std::string &exerciseName, int &sets, int &reps, double &weight)
+void inputWorkoutfromUser(std::string &workoutName, std::string &exerciseName, int &sets, int &reps, double &weight)
 {
-  std::cin.ignore();
   std::cout << "Enter Workout Name: ";
   std::cin.ignore();
   std::getline(std::cin, workoutName);
@@ -149,4 +170,19 @@ void inputWorkout(std::string &workoutName, std::string &exerciseName, int &sets
 
   std::cout << "Input weight in kg: ";
   std::cin >> weight;
+}
+
+void writeToStream(std::ofstream &file, const std::string &label, const std::string &value)
+{
+  file << label << " " << value << std::endl;
+}
+
+void writeToStream(std::ofstream &file, const std::string &label, int value)
+{
+  file << label << " " << value << std::endl;
+}
+
+void writeToStream(std::ofstream &file, const std::string &label, double value)
+{
+  file << label << " " << value << std::endl;
 }
