@@ -4,7 +4,7 @@
 #include <fstream>
 #include <cstdio>
 
-void inputWorkoutfromUser(std::string &workoutName, std::string &exerciseName, int &sets, int &reps, double &weight);
+void inputWorkoutfromUser(std::string &workoutName);
 
 void writeToStream(std::ofstream &file, const std::string &label, const std::string &value);
 
@@ -19,10 +19,11 @@ int main()
   std::string date_FileName;
   std::string workoutName;
   std::string exerciseName;
-  int sets;
+  int sets = 0;
   int reps = 0;
-  double weight;
+  double weight = 0.0;
   int choice = -1;
+  int numExercises = 0;
 
   std::ofstream fout;
   std::ifstream fin;
@@ -46,17 +47,42 @@ int main()
     case 1:
       std::cout << "Adding a Workout ..." << std::endl;
       std::cout << "Enter date (dd-mm-yy): ";
-      std::cin >> date_FileName;
-      inputWorkoutfromUser(workoutName, exerciseName, sets, reps, weight);
+      std::cin.ignore();
+      std::getline(std::cin, date_FileName);
+
+      std::cout << "Enter workout name: ";
+      std::cin.ignore();
+      std::getline(std::cin, workoutName);
+
       // Saving workout to file
       fout.open(date_FileName + ".txt");
       if (fout.is_open())
       {
         writeToStream(fout, "Workout Name:", workoutName);
-        writeToStream(fout, "Exercise Name:", exerciseName);
-        writeToStream(fout, "Sets:", sets);
-        writeToStream(fout, "Reps:", reps);
-        writeToStream(fout, "Weight:", weight);
+        std::cout << "How many exercises would you like to save: ";
+        std::cin >> numExercises;
+        for (int i = 1; i <= numExercises; i++)
+        {
+          std::cout << "Enter name of exercise no. " << i << ": ";
+          std::cin.ignore();
+          std::getline(std::cin, exerciseName);
+
+          std::cout << "Enter no. of sets: ";
+          std::cin >> sets;
+
+          writeToStream(fout, "Exercise Name:", exerciseName);
+          writeToStream(fout, "Sets:", sets);
+          for (int i = 1; i <= sets; i++)
+          {
+            std::cout << "Set no. " << i << " reps: ";
+            std::cin >> reps;
+            fout << "Set no. " << i << " reps: " << std::endl;
+            std::cout << "Weight on set no. " << i << ": ";
+            std::cin >> weight;
+            fout << "Weight on set no. " << i << ": " << weight << std::endl;
+          }
+        }
+
         std::cout << "Workout saved." << std::endl;
         fout.close();
       }
@@ -69,11 +95,11 @@ int main()
 
     case 2:
       std::cout << "Adding a Rest day ..." << std::endl;
-      std::cout << "Enter date (dd/mm/yy): ";
+      std::cout << "Enter date (dd-mm-yy): ";
       std::cin >> date_FileName;
 
-      fin.open(date_FileName + ".txt");
-      if (fin.is_open())
+      fout.open(date_FileName + ".txt");
+      if (fout.is_open())
       {
         fout << "**Rest Day**" << std::endl;
         std::cout << "Rest Day saved." << std::endl;
@@ -86,43 +112,92 @@ int main()
           std::string restDayNote;
           std::cout << "Note: ";
           std::cin.ignore();
-          std::getline(fin, restDayNote);
+          std::getline(std::cin, restDayNote);
+          fout << restDayNote;
           std::cout << "Note added to rest day " << date_FileName << " ." << std::endl;
-          fin.close();
         }
+
         else if (noteChoice == 'n' || noteChoice == 'N')
         {
           std::cout << "Did not added a note and the rest day is saved." << std::endl;
         }
       }
+
+      fout.close();
+
       break;
     case 3:
+      int editChoice;
       std::cout << "Editing a workout ..." << std::endl;
-      std::cout << "Enter date of the workout (dd/mm/yy): ";
+      std::cout << "Enter date of the workout (dd-mm-yy): ";
       std::cin >> date_FileName;
       std::cout << "What would you like to do?" << std::endl;
       std::cout << "1. Add an exercise." << std::endl;
       std::cout << "2. Edit an exercise." << std::endl;
       std::cout << "3. Delete an exercise." << std::endl;
       std::cout << "0. Return to dashboard." << std::endl;
-
-      int editChoice;
-      /*switch (editChoice)
+      std::cin >> editChoice;
+      switch (editChoice)
       {
       case 1:
         // append exercise to file
+        std::cout << "Updating " << date_FileName << " ..." << std::endl;
+        fout.open(date_FileName + ".txt", std::ios::app);
+
+        if (fout.is_open())
+        {
+          std::cout << "How many exercises would you like to add: ";
+          std::cin >> numExercises;
+          for (int i = 1; i <= numExercises; i++)
+          {
+            std::cout << "Enter name of exercise no. " << i << ": ";
+            std::cin.ignore();
+            std::getline(std::cin, exerciseName);
+
+            std::cout << "Enter no. of sets: ";
+            std::cin >> sets;
+
+            writeToStream(fout, "Exercise Name:", exerciseName);
+            writeToStream(fout, "Sets:", sets);
+            for (int i = 1; i <= sets; i++)
+            {
+              std::cout << "Set no. " << i << " reps: ";
+              std::cin >> reps;
+              fout << "Set no. " << i << " reps: " << std::endl;
+              std::cout << "Weight on set no. " << i << ": ";
+              std::cin >> weight;
+              fout << "Weight on set no. " << i << ": " << weight << std::endl;
+            }
+          }
+          std::cout << date_FileName << " successfully updated." << std::endl;
+        }
+        else if(!fout.is_open()){
+          std::cout << "File not found." << std::endl;
+        }
+        else{
+          std::cout << "Invalid choice." << std::endl;
+        }
+        fout.close();
+        break;
+
       case 2:
         // ask if the user wants to:
         //   1. change exercise name
         //   2. edit no. of sets or reps
         //  3. edit weight
         //  4. go back to menu
+        break;
       case 3:
         // Ask exercise name
         // Confirm if the user wants to delete the exercise
         // Delete exercise and show the workout in console and save in file
-      }*/
+        break;
+      default:
+        std::cout << "Invalid choice." << std::endl;
+        break;
+      }
       break;
+
     case 4:
       std::cout << "Enter date: ";
       std::cin >> date_FileName;
@@ -148,28 +223,21 @@ int main()
       break;
     default:
       std::cout << "Invalid choice." << std::endl;
+      break;
     }
   }
+
   return 0;
 }
 
-void inputWorkoutfromUser(std::string &workoutName, std::string &exerciseName, int &sets, int &reps, double &weight)
+void inputWorkoutfromUser(std::string &workoutName, int &sets)
 {
   std::cout << "Enter Workout Name: ";
   std::cin.ignore();
   std::getline(std::cin, workoutName);
 
-  std::cout << "Input Exercise name: ";
-  std::getline(std::cin, exerciseName);
-
   std::cout << "Input Number of Sets: ";
   std::cin >> sets;
-
-  std::cout << "Input Number of Reps: ";
-  std::cin >> reps;
-
-  std::cout << "Input weight in kg: ";
-  std::cin >> weight;
 }
 
 void writeToStream(std::ofstream &file, const std::string &label, const std::string &value)
@@ -182,7 +250,7 @@ void writeToStream(std::ofstream &file, const std::string &label, int value)
   file << label << " " << value << std::endl;
 }
 
-void writeToStream(std::ofstream &file, const std::string &label, double value)
-{
-  file << label << " " << value << std::endl;
-}
+// void writeToStream(std::ofstream &file, const std::string &label, double value)
+// {
+//   file << label << " " << value << std::endl;
+// }
