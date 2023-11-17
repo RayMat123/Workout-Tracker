@@ -29,4 +29,5 @@ Welcome to the Console Based Workout Tracker! This simple C++ program allows you
 1. Compile the program using a C++ compiler.
 
    ```bash
-   g++ workout_tracker.cpp -o workout_tracker
+   g++ main.cpp functions.cpp -o workout_tracker
+   ./workout_tracker
