@@ -24,6 +24,6 @@ void workoutInput(std::ofstream &fout, std::string &workoutName, int &numExercis
 
 void restDayNote(std::ofstream &fout, std::string &date_FileName, char &noteChoice);
 
-int editExercise(int &user_choice);
+void printContentsOfFile(std::ifstream &fin, std::string &date_FileName, std::string &file_Content);
 
 #endif 

@@ -18,7 +18,7 @@ Welcome to the Console Based Workout Tracker! This simple C++ program allows you
 
 2. **Adding a Rest Day**: Choose option 2 and enter the date for your rest day. This will be saved as a rest day in the program.
 
-3. **Editing a Workout**: Choose option 3 and provide the date of the workout you want to edit. You can then choose to add an exercise, edit an exercise, or delete an exercise.
+3. **Editing a Workout**: Choose option 3 and provide the date of the workout you want to edit. You can then choose to add an exercise or return to dashboard.
 
 4. **Deleting a Workout or Rest Day**: Choose option 4 and enter the date of the workout or rest day you want to delete. Confirm your choice, and the data will be deleted.
 

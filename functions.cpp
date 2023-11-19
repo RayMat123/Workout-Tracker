@@ -51,8 +51,6 @@ int editWorkoutChoice(int &choice)
     std::cout << "Choose from the following options to continue." << std::endl;
     std::cout << "+-------------------------------------------+" << std::endl;
     std::cout << "|\t1. Add exercise(s).\t\t  |" << std::endl;
-    std::cout << "|\t2. Edit exercise(s).\t\t  |" << std::endl;
-    std::cout << "|\t3. Delete exercise(s).\t\t  |" << std::endl;
     std::cout << "|\t0. Return to dashboard.\t\t  |" << std::endl;
     std::cout << "+-------------------------------------------+" << std::endl;
     std::cout << "Select an option (0-3): ";
@@ -62,8 +60,10 @@ int editWorkoutChoice(int &choice)
 
 void dateInput(std::string &date_FileName)
 {
+    std::cout << "+-----------------------+" << std::endl;
     std::cout << "Enter date (dd-mm-yy): ";
     std::getline(std::cin, date_FileName);
+    std::cout << "+-----------------------+" << std::endl;
 }
 
 void workoutInput(std::ofstream &fout, std::string &workoutName, int &numExercises, std::string &exerciseName, int &sets, int &reps, double &weight)
@@ -113,14 +113,31 @@ void restDayNote(std::ofstream &fout, std::string &date_FileName, char &noteChoi
     }
 }
 
-int editExercise(int &user_choice)
+
+
+void printContentsOfFile(std::ifstream &fin, std::string &date_FileName, std::string &file_Content)
 {
-    std::cout << "Choose from the following" << std::endl;
-    std::cout << "1. Change the name of the exercise." << std::endl;
-    std::cout << "2. Edit sets." << std::endl;
-    std::cout << "3. Edit reps." << std::endl;
-    std::cout << "4. Edit weight." << std::endl;
-    std::cout << "0. Return to dashboard." << std::endl;
-    std::cin >> user_choice;
-    return user_choice;
+    fin.open(date_FileName + ".txt");
+    std::cout << date_FileName << std::endl;
+    if (fin.is_open(), std::ios::in)
+    {
+        std::cout << "Following is the data stored in this file." << std::endl;
+        std::cout << "+---------------------+" << std::endl;
+        std::cout << std::endl;
+        while (std::getline(fin, file_Content))
+        {
+            std::cout << file_Content << "\n";
+        }
+        std::cout << "+---------------------+" << std::endl;
+    }
+    else if (!fin.is_open())
+    {
+        std::cerr << "Error. File not found." << std::endl;
+    }
+
+    else
+    {
+        std::cerr << "Invalid choice." << std::endl;
+    }
+    fin.close();
 }

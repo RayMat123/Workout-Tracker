@@ -1,4 +1,3 @@
-// Work in progress output will be saved in .txt files
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -7,7 +6,6 @@
 
 int main()
 {
-
   std::string chooseDay;
   std::string date_FileName;
   std::string workoutName;
@@ -18,7 +16,7 @@ int main()
   int choice = -1;
   int numExercises = 0;
 
-  std::string tempPrint;
+  std::string file_Content;
 
   std::ofstream fout;
   std::ifstream fin;
@@ -48,6 +46,7 @@ int main()
         workoutInput(fout, workoutName, numExercises, exerciseName, sets, reps, weight);
 
         std::cout << "Workout saved." << std::endl;
+        printContentsOfFile(fin, date_FileName, file_Content);
       }
       else
       {
@@ -84,6 +83,7 @@ int main()
     case 3:
       int editChoice;
       std::cout << "Editing a workout ..." << std::endl;
+      dateInput(date_FileName);
 
       editWorkoutChoice(editChoice);
 
@@ -93,11 +93,13 @@ int main()
         // append exercise to file
         std::cout << "Updating " << date_FileName << " ..." << std::endl;
         fout.open(date_FileName + ".txt", std::ios::app);
+        printContentsOfFile(fin, date_FileName, file_Content);
 
         if (fout.is_open())
         {
           workoutInput(fout, workoutName, numExercises, exerciseName, sets, reps, weight);
           std::cout << date_FileName << " successfully updated." << std::endl;
+          printContentsOfFile(fin, date_FileName, file_Content);
         }
         else if (!fout.is_open())
         {
@@ -110,51 +112,30 @@ int main()
         fout.close();
         break;
 
-      case 2:
-        // ask if the user wants to:
-        //   1. change exercise name
-        //   2. edit no. of sets or reps
-        //  3. edit weight
-        //  4. go back to dashboard
-        int user_choice;
-
-        editExercise(user_choice);
-
-        switch (user_choice)
-        {
-        case 1:
-          dateInput(date_FileName);
-          fin.open(date_FileName + ".txt");
-          if (fin.is_open(), std::ios::in)
-          {
-            std::cout << "Following is the data stored in this file." << std::endl;
-            std::cout << "+-------------+" << std::endl;
-            while (std::getline(fin, tempPrint))
-            {
-              std::cout << tempPrint << "\n";
-            }
-            std::cout << "+-------------+" << std::endl;
-          }
-          else if(!fin.is_open())
-          {
-            std::cerr << "Error. File not found." << std::endl;
-          }
-
-          else{
-            std::cerr << "Invalid choice." << std::endl;
-          }
-          fin.close();
-
-          break;
-
-        default:
-          std::cout << "Invalid choice. "
-                    << "\n";
-          break;
-        }
+      case 0:
+        std::cout << "+-----------------------+" << std::endl;
+        std::cout << "| Returning to dashboard. |" << std::endl;
+        std::cout << "+-----------------------+" << std::endl;
+        break;
+      default:
+        std::cerr << "Invalid choice." << std::endl;
         break;
       }
-      break;
+
+    case 4:
+      dateInput(date_FileName);
+      std::cout << "+-----------------------+" << std::endl;
+      std::cout << "Deleting the file ..." << std::endl;
+      std::cout << "+-----------------------+" << std::endl;
+      date_FileName += ".txt";
+      if (std::remove(date_FileName.c_str()) == 0)
+      {
+        std::cout << "File successfully deleted.\n";
+      }
+      else
+      {
+        std::cerr << "Error deleting the file.\n";
+      }
 
     case 0:
       std::cout << "+-----------------------+" << std::endl;
@@ -167,6 +148,7 @@ int main()
       break;
     }
   }
-
+  fin.close();
+  fout.close();
   return 0;
 }
